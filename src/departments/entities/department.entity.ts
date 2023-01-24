@@ -1,5 +1,5 @@
-import { Project } from 'src/projects/entities/project.entity';
-import { Room } from 'src/rooms/entities/room.entity';
+import Project from 'src/projects/entities/project.entity';
+import Room from 'src/rooms/entities/room.entity';
 import {
     Column,
     Entity,
@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 @Entity('departments')
-export class Department {
+export default class Department {
     @PrimaryGeneratedColumn()
     id: number;
 

@@ -8,14 +8,20 @@ import { ProjectsModule } from './projects/projects.module';
 import { SubjectsModule } from './subjects/subjects.module';
 import Project from './projects/entities/project.entity';
 import Subject from './subjects/entities/subject.entity';
+import Room from './rooms/entities/room.entity';
+import Department from './departments/entities/department.entity';
+import { RoomsModule } from './rooms/rooms.module';
+import { DepartmentsModule } from './departments/departments.module';
 
 @Module({
     imports: [
         configModule,
-        typeormModule([User, UserProfile, Project, Subject]),
+        typeormModule([User, UserProfile, Project, Subject, Room, Department]),
         UsersModule,
         ProjectsModule,
         SubjectsModule,
+        RoomsModule,
+        DepartmentsModule,
     ],
 })
 export class AppModule {}

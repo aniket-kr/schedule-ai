@@ -1,5 +1,5 @@
+import Department from 'src/departments/entities/department.entity';
 import Subject from 'src/subjects/entities/subject.entity';
-import TimeSlot from 'src/time-slots/entities/time-slot';
 import User from 'src/users/entities/user.entity';
 import {
     Column,
@@ -24,13 +24,13 @@ export default class Project {
     @JoinColumn()
     owner: User;
 
-    @OneToMany(() => TimeSlot, (timeSlot) => timeSlot.project, {
-        onDelete: 'CASCADE',
-    })
-    timeSlots: TimeSlot[];
-
     @OneToMany(() => Subject, (subject) => subject.project, {
         onDelete: 'CASCADE',
     })
     subjects: Subject[];
+
+    @OneToMany(() => Department, (department) => department.project, {
+        onDelete: 'CASCADE',
+    })
+    departments: Department[];
 }

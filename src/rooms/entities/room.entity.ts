@@ -1,4 +1,4 @@
-import { Department } from 'src/departments/entities/department.entity';
+import Department from 'src/departments/entities/department.entity';
 import {
     Column,
     Entity,
@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 @Entity('rooms')
-export class Room {
+export default class Room {
     @PrimaryGeneratedColumn()
     id: number;
 
