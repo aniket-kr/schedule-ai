@@ -1,9 +1,11 @@
 import { Project } from 'src/projects/entities/project.entity';
+import { Room } from 'src/rooms/entities/room.entity';
 import {
     Column,
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -18,4 +20,9 @@ export class Department {
     @ManyToOne(() => Project, (project) => project.departments)
     @JoinColumn()
     project: Project;
+
+    @OneToMany(() => Room, (room) => room.department, {
+        onDelete: 'CASCADE',
+    })
+    rooms: Room[];
 }

@@ -8,7 +8,10 @@ import dbConfig from './config/db.config';
 import appConfig from './config/app.config';
 import { Department } from './departments/entities/department.entity';
 import { Project } from './projects/entities/project.entity';
-
+import { RoomsModule } from './rooms/rooms.module';
+import { Room } from './rooms/entities/room.entity';
+import { SubjectsModule } from './subjects/subjects.module';
+import { Subject } from 'src/subjects/entities/subject.entity';
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -26,11 +29,13 @@ import { Project } from './projects/entities/project.entity';
                 database: configService.get<string>('db.databaseName'),
                 synchronize: true,
                 connectTimeout: configService.get<number>('db.timeoutMillis'),
-                entities: [Department, Project],
+                entities: [Department, Project, Room, Subject],
             }),
         }),
         DepartmentsModule,
         ProjectsModule,
+        RoomsModule,
+        SubjectsModule,
     ],
 })
 export class AppModule {}
