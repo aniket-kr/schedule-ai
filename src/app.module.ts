@@ -1,40 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DepartmentsModule } from './departments/departments.module';
+import { configModule } from './moduleConfig/config';
+import { typeormModule } from './moduleConfig/typeorm';
+import User from './users/entities/user.entity';
+import UserProfile from './users/entities/user-profile.entity';
+import { UsersModule } from './users/users.module';
 import { ProjectsModule } from './projects/projects.module';
-
-import dbConfig from './config/db.config';
-import appConfig from './config/app.config';
-import { Department } from './departments/entities/department.entity';
-import { Project } from './projects/entities/project.entity';
-import { RoomsModule } from './rooms/rooms.module';
-import { Room } from './rooms/entities/room.entity';
 import { SubjectsModule } from './subjects/subjects.module';
-import { Subject } from 'src/subjects/entities/subject.entity';
+import Project from './projects/entities/project.entity';
+import Subject from './subjects/entities/subject.entity';
+
 @Module({
     imports: [
-        ConfigModule.forRoot({
-            isGlobal: true,
-            load: [dbConfig, appConfig],
-        }),
-        TypeOrmModule.forRootAsync({
-            inject: [ConfigService],
-            useFactory: async (configService: ConfigService) => ({
-                type: 'mysql' as const,
-                host: configService.get<string>('db.hostname'),
-                port: configService.get<number>('db.port'),
-                username: configService.get<string>('db.username'),
-                password: configService.get<string>('db.password'),
-                database: configService.get<string>('db.databaseName'),
-                synchronize: true,
-                connectTimeout: configService.get<number>('db.timeoutMillis'),
-                entities: [Department, Project, Room, Subject],
-            }),
-        }),
-        DepartmentsModule,
+        configModule,
+        typeormModule([User, UserProfile, Project, Subject]),
+        UsersModule,
         ProjectsModule,
-        RoomsModule,
         SubjectsModule,
     ],
 })

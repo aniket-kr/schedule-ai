@@ -1,4 +1,4 @@
-import { Project } from 'src/projects/entities/project.entity';
+import Project from 'src/projects/entities/project.entity';
 import {
     Column,
     Entity,
@@ -8,12 +8,12 @@ import {
 } from 'typeorm';
 
 @Entity('subjects')
-export class Subject {
+export default class Subject {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    code: number;
+    @Column({ length: 10 })
+    code: string;
 
     @Column({ length: 100 })
     name: string;
