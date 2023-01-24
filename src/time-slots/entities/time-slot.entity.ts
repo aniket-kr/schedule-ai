@@ -9,22 +9,25 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('subjects')
-export default class Subject {
+@Entity('time_slots')
+export default class TimeSlot {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 10 })
-    code: string;
+    @Column()
+    start_minutes: number;
 
-    @Column({ length: 100 })
-    name: string;
+    @Column()
+    end_minutes: number;
 
-    @ManyToOne(() => Project, (project) => project.subjects)
+    @Column()
+    day: number;
+
+    @ManyToOne(() => Project, (project) => project.time_slots)
     @JoinColumn()
     project: Project;
 
-    @OneToMany(() => Lecture, (lecture) => lecture.subject, {
+    @OneToMany(() => Lecture, (lecture) => lecture.timeSlot, {
         onDelete: 'CASCADE',
     })
     lectures: Lecture[];

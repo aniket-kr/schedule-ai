@@ -1,7 +1,6 @@
 import Lecture from 'src/lectures/entities/lecture.entity';
 import Project from 'src/projects/entities/project.entity';
 import {
-    Column,
     Entity,
     JoinColumn,
     ManyToOne,
@@ -9,22 +8,16 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('subjects')
-export default class Subject {
+@Entity('schedules')
+export default class Schedule {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 10 })
-    code: string;
-
-    @Column({ length: 100 })
-    name: string;
-
-    @ManyToOne(() => Project, (project) => project.subjects)
+    @ManyToOne(() => Project, (project) => project.schedules)
     @JoinColumn()
     project: Project;
 
-    @OneToMany(() => Lecture, (lecture) => lecture.subject, {
+    @OneToMany(() => Lecture, (lecture) => lecture.schedule, {
         onDelete: 'CASCADE',
     })
     lectures: Lecture[];

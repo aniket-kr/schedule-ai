@@ -1,5 +1,6 @@
 import Lecture from 'src/lectures/entities/lecture.entity';
 import Project from 'src/projects/entities/project.entity';
+import User from 'src/users/entities/user.entity';
 import {
     Column,
     Entity,
@@ -9,22 +10,23 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('subjects')
-export default class Subject {
+@Entity('faculties')
+export default class Faculty {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @ManyToOne(() => Project, (project) => project.faculties)
+    @JoinColumn()
+    project: Project;
 
     @Column({ length: 10 })
     code: string;
 
-    @Column({ length: 100 })
-    name: string;
-
-    @ManyToOne(() => Project, (project) => project.subjects)
+    @ManyToOne(() => User, (user) => user.faculties)
     @JoinColumn()
-    project: Project;
+    user: User;
 
-    @OneToMany(() => Lecture, (lecture) => lecture.subject, {
+    @OneToMany(() => Lecture, (lecutue) => lecutue.faculty, {
         onDelete: 'CASCADE',
     })
     lectures: Lecture[];

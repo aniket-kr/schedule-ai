@@ -1,10 +1,12 @@
 import Department from 'src/departments/entities/department.entity';
+import Lecture from 'src/lectures/entities/lecture.entity';
 import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
+    OneToMany,
 } from 'typeorm';
 
 @Entity('rooms')
@@ -21,4 +23,9 @@ export default class Room {
     @ManyToOne(() => Department, (department) => department.rooms)
     @JoinColumn()
     department: Department;
+
+    @OneToMany(() => Lecture, (lecture) => lecture.room, {
+        onDelete: 'CASCADE',
+    })
+    lectures: Lecture[];
 }
