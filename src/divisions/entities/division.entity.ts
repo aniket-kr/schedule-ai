@@ -5,10 +5,12 @@ import {
     JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn,
+    Unique,
 } from 'typeorm';
 
+@Unique(['project', 'name'])
 @Entity('divisions')
-export default class Divison {
+export default class Division {
     @PrimaryGeneratedColumn()
     id: number;
 

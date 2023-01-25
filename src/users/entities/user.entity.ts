@@ -35,8 +35,6 @@ export default class User {
     })
     projects: Project[];
 
-    @OneToMany(() => Faculty, (faculty) => faculty.user, {
-        onDelete: 'CASCADE',
-    })
+    @OneToMany(() => Faculty, (faculty) => faculty.user)
     faculties: Faculty[];
 }

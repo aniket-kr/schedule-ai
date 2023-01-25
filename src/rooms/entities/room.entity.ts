@@ -8,6 +8,7 @@ import {
     JoinColumn,
     OneToMany,
 } from 'typeorm';
+import RoomType from './room-type.entity';
 
 @Entity('rooms')
 export default class Room {
@@ -28,4 +29,8 @@ export default class Room {
         onDelete: 'CASCADE',
     })
     lectures: Lecture[];
+
+    @ManyToOne(() => RoomType, (roomType) => roomType.rooms)
+    @JoinColumn()
+    type: RoomType;
 }

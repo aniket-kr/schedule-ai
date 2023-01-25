@@ -24,7 +24,7 @@ export default class Lecture {
 
     @ManyToOne(() => Faculty, (faculty) => faculty.lectures)
     @JoinColumn()
-    faculty: Faculty[];
+    faculty: Faculty;
 
     @ManyToOne(() => TimeSlot, (timeSlot) => timeSlot.lectures)
     @JoinColumn()

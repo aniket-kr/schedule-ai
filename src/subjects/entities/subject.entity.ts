@@ -1,9 +1,11 @@
+import Faculty from 'src/faculties/entities/faculty.entity';
 import Lecture from 'src/lectures/entities/lecture.entity';
 import Project from 'src/projects/entities/project.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -28,4 +30,9 @@ export default class Subject {
         onDelete: 'CASCADE',
     })
     lectures: Lecture[];
+
+    @ManyToMany(() => Faculty, (faculty) => faculty.subjects, {
+        orphanedRowAction: 'delete',
+    })
+    faculties: Faculty[];
 }

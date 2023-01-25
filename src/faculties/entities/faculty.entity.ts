@@ -1,15 +1,19 @@
 import Lecture from 'src/lectures/entities/lecture.entity';
 import Project from 'src/projects/entities/project.entity';
+import Subject from 'src/subjects/entities/subject.entity';
 import User from 'src/users/entities/user.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    Unique,
 } from 'typeorm';
 
+@Unique(['project', 'code', 'user'])
 @Entity('faculties')
 export default class Faculty {
     @PrimaryGeneratedColumn()
@@ -26,8 +30,13 @@ export default class Faculty {
     @JoinColumn()
     user: User;
 
-    @OneToMany(() => Lecture, (lecutue) => lecutue.faculty, {
+    @OneToMany(() => Lecture, (lecture) => lecture.faculty, {
         onDelete: 'CASCADE',
     })
     lectures: Lecture[];
+
+    @ManyToMany(() => Subject, (subject) => subject.faculties, {
+        orphanedRowAction: 'delete',
+    })
+    subjects: Subject[];
 }

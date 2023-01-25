@@ -19,7 +19,7 @@ import { TimeSlotsModule } from './time-slots/time-slots.module';
 import { LecturesModule } from './lectures/lectures.module';
 import Faculty from './faculties/entities/faculty.entity';
 import RoomType from './rooms/entities/room-type.entity';
-import Divison from './divisions/entities/division.entity';
+import Division from './divisions/entities/division.entity';
 import Schedule from './schedules/entities/schedule.entity';
 import Lecture from './lectures/entities/lecture.entity';
 import TimeSlot from './time-slots/entities/time-slot.entity';
@@ -33,13 +33,13 @@ import TimeSlot from './time-slots/entities/time-slot.entity';
             Project,
             Subject,
             Room,
-            Department,
-            Faculty,
             RoomType,
-            Divison,
+            Department,
             Schedule,
-            Lecture,
+            Faculty,
+            Division,
             TimeSlot,
+            Lecture,
         ]),
         UsersModule,
         ProjectsModule,

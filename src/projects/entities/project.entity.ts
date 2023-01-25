@@ -1,5 +1,5 @@
 import Department from 'src/departments/entities/department.entity';
-import Divison from 'src/divisions/entities/division.entity';
+import Division from 'src/divisions/entities/division.entity';
 import Faculty from 'src/faculties/entities/faculty.entity';
 import RoomType from 'src/rooms/entities/room-type.entity';
 import Schedule from 'src/schedules/entities/schedule.entity';
@@ -52,15 +52,15 @@ export default class Project {
     @OneToMany(() => RoomType, (roomType) => roomType.project, {
         onDelete: 'CASCADE',
     })
-    room_types: RoomType[];
+    roomTypes: RoomType[];
 
-    @OneToMany(() => Divison, (division) => division.project, {
+    @OneToMany(() => Division, (division) => division.project, {
         onDelete: 'CASCADE',
     })
-    divisions: Divison[];
+    divisions: Division[];
 
     @OneToMany(() => TimeSlot, (timeSlot) => timeSlot.project, {
         onDelete: 'CASCADE',
     })
-    time_slots: TimeSlot[];
+    timeSlots: TimeSlot[];
 }

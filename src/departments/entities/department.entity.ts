@@ -7,8 +7,10 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    Unique,
 } from 'typeorm';
 
+@Unique(['project', 'name'])
 @Entity('departments')
 export default class Department {
     @PrimaryGeneratedColumn()
