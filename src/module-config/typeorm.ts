@@ -5,7 +5,7 @@ import UserProfile from 'src/user-profiles/entities/user-profile.entity';
 import Project from 'src/projects/entities/project.entity';
 import Subject from 'src/subjects/entities/subject.entity';
 import Room from 'src/rooms/entities/room.entity';
-import RoomType from 'src/rooms/entities/room-type.entity';
+import RoomType from 'src/room-types/entities/room-type.entity';
 import Department from 'src/departments/entities/department.entity';
 import Schedule from 'src/schedules/entities/schedule.entity';
 import Faculty from 'src/faculties/entities/faculty.entity';

@@ -2,7 +2,7 @@ import { Exclude } from 'class-transformer';
 import Department from '../../departments/entities/department.entity';
 import Division from '../../divisions/entities/division.entity';
 import Faculty from '../../faculties/entities/faculty.entity';
-import RoomType from '../../rooms/entities/room-type.entity';
+import RoomType from '../../room-types/entities/room-type.entity';
 import Schedule from '../../schedules/entities/schedule.entity';
 import Subject from '../../subjects/entities/subject.entity';
 import TimeSlot from '../../time-slots/entities/time-slot.entity';

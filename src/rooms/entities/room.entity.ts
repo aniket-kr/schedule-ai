@@ -8,7 +8,7 @@ import {
     JoinColumn,
     OneToMany,
 } from 'typeorm';
-import RoomType from './room-type.entity';
+import RoomType from '../../room-types/entities/room-type.entity';
 
 @Entity('rooms')
 export default class Room {
