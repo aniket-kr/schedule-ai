@@ -13,6 +13,9 @@ import { TimeSlotsModule } from './time-slots/time-slots.module';
 import { LecturesModule } from './lectures/lectures.module';
 import { UserProfilesModule } from './user-profiles/user-profiles.module';
 import { AuthModule } from './auth/auth.module';
+import { RoomTypesController } from './room-types/room-types.controller';
+import { RoomTypesService } from './room-types/room-types.service';
+import { RoomTypesModule } from './room-types/room-types.module';
 
 @Module({
     imports: [
@@ -30,6 +33,9 @@ import { AuthModule } from './auth/auth.module';
         LecturesModule,
         UserProfilesModule,
         AuthModule,
+        RoomTypesModule,
     ],
+    controllers: [RoomTypesController],
+    providers: [RoomTypesService],
 })
 export class AppModule {}

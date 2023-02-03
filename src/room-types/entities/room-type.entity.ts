@@ -7,7 +7,7 @@ import {
     OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import Room from './room.entity';
+import Room from '../../rooms/entities/room.entity';
 
 @Entity('room_types')
 export default class RoomType {

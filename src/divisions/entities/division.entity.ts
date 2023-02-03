@@ -25,4 +25,5 @@ export default class Division {
     })
     @JoinColumn()
     project: Project;
+    division: import('/home/avish/timelog-ai-scheduler/src/users/entities/user.entity').default;
 }
