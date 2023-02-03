@@ -1,7 +1,7 @@
-<!-- <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+ <p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://github.com/Avishk12/timelog-ai-scheduler/blob/main/Screenshot%20from%202023-02-03%2012-08-02.png" /></a>
 </p>
- -->
+ 
 <!-- [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
@@ -24,7 +24,6 @@
 
  ## Description 
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 A web application that can automatically figure out the timetable for each division, faculty, and classroom/lab, given that it knows the lectures to schedule.
 
@@ -74,3 +73,10 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE). -->
+
+## Group Members
+-  Aniket Kumar
+- Avish Khandelwal
+- Divanshu Singh
+- Harsh Bawaskar
+
