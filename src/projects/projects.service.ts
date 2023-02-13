@@ -1,67 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsersService } from '../users/users.service';
 import { Repository } from 'typeorm';
+import { BaseService } from '../common/services/base.service';
+import User from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import CreateProjectDto from './dto/create-project.dto';
 import UpdateProjectDto from './dto/update-project.dto';
 import Project from './entities/project.entity';
-import {
-    ProjectExistsException,
-    ProjectNotFoundException,
-} from './projects.exception';
+
+export type ProjectCreateOptions = {
+    ownerId: User['id'];
+    dto: CreateProjectDto;
+};
+
+export type ProjectUpdateOptions = {
+    ownerId: User['id'];
+    projectId: Project['id'];
+    dto: UpdateProjectDto;
+};
 
 @Injectable()
-export class ProjectsService {
+export class ProjectsService extends BaseService<Project> {
     constructor(
         @InjectRepository(Project)
-        private readonly projectsRepo: Repository<Project>,
+        protected readonly repo: Repository<Project>,
         private readonly usersService: UsersService,
-    ) {}
-
-    async fetchPaginated(ownerId: number, limit: number, page: number) {
-        return this.projectsRepo.findAndCount({
-            skip: page * limit,
-            take: limit,
-            where: { owner: { id: ownerId } },
+    ) {
+        super({
+            notFound({ id }) {
+                const err = `project with id ${id} does not exist`;
+                return new NotFoundException(err, {
+                    description: 'ProjectNotFoundException',
+                });
+            },
+            exists({ name }) {
+                const err = `project with name '${name}' already exists`;
+                return new ConflictException(err, {
+                    description: 'ProjectExistsException',
+                });
+            },
         });
     }
 
-    // TODO: work on this @aniket-kr
-    // async fetchDetailedPaginated(ownerId: number, limit: number, page: number) {
-    // }
-
-    async fetchOne(projectId: number) {
-        const project = await this.projectsRepo.findOneBy({ id: projectId });
-        if (!project) {
-            throw new ProjectNotFoundException(projectId);
-        }
-        return project;
-    }
-
-    async create(userId: number, projectDto: CreateProjectDto) {
-        const condition = { owner: { id: userId }, name: projectDto.name };
-        const existing = await this.projectsRepo.findOneBy(condition);
-        if (existing) {
-            throw new ProjectExistsException(existing);
-        }
-
-        const project = this.projectsRepo.create(projectDto);
+    async create({ ownerId, dto }: ProjectCreateOptions) {
+        await this.ensureNotExists({ name: dto.name, owner: { id: ownerId } });
+        const project = this.repo.create(dto);
         await project.owner;
-        project.owner = await this.usersService.fetchOne(userId);
-        return this.projectsRepo.save(project);
+        project.owner = await this.usersService.fetchOne({ id: ownerId });
+        return this.repo.save(project);
     }
 
-    async update(
-        userId: number,
-        projectId: number,
-        projectDto: UpdateProjectDto,
-    ) {
-        const where = { id: projectId, owner: { id: userId } };
-        const belongsToUser = await this.projectsRepo.exist({ where });
-        if (!belongsToUser) {
-            throw new ProjectNotFoundException(projectId);
+    async update({ ownerId, projectId, dto }: ProjectUpdateOptions) {
+        await this.ensureExists({ id: projectId, owner: { id: ownerId } });
+        if (dto.name) {
+            this.ensureNotExists({ owner: { id: ownerId }, name: dto.name });
         }
-        await this.projectsRepo.update({ id: projectId }, projectDto);
-        return this.fetchOne(projectId);
+        this.repo.update({ id: projectId, owner: { id: ownerId } }, dto);
+        return this.fetchOne({ id: projectId });
     }
 }

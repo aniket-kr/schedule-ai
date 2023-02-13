@@ -2,11 +2,12 @@ import {
     Body,
     ClassSerializerInterceptor,
     Controller,
+    Delete,
     Get,
+    Param,
     ParseIntPipe,
     Patch,
     Post,
-    Param,
     Query,
     Req,
     UseGuards,
@@ -16,7 +17,6 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/auth.guard';
-import { UserToken } from '../auth/contracts/user-token.contract';
 import { JwtUser } from '../common/decorators/user.decorator';
 import { DefaultPipe } from '../common/pipes/default.pipe';
 import { makeUrl } from '../common/utils';
@@ -33,7 +33,7 @@ export class ProjectsController {
     @UseInterceptors(ClassSerializerInterceptor)
     async fetchPaginated(
         @Req() req: Request,
-        @JwtUser() token: UserToken,
+        @JwtUser('userId', ParseIntPipe) userId: number,
         @Query('limit', new DefaultPipe('20'), ParseIntPipe) limit: number,
         @Query('offset', new DefaultPipe('0'), ParseIntPipe) page: number,
         // @Query('detailed', new DefaultPipe('false'), ParseBoolPipe)
@@ -41,9 +41,9 @@ export class ProjectsController {
     ) {
         const nextUrl = makeUrl(req, { limit, offset: page + 1 });
         const [projects, total] = await this.projectsService.fetchPaginated(
-            token.userId,
-            limit,
             page,
+            limit,
+            { owner: { id: userId } },
         );
         const hasNext = total > page * limit + projects.length;
         return { projects, next: hasNext ? nextUrl : undefined };
@@ -51,8 +51,14 @@ export class ProjectsController {
 
     @Get(':id')
     @UseInterceptors(ClassSerializerInterceptor)
-    async fetchOne(@Param('id') projectId: number) {
-        return await this.projectsService.fetchOne(projectId);
+    async fetchOne(
+        @JwtUser('userId', ParseIntPipe) userId: number,
+        @Param('id', ParseIntPipe) projectId: number,
+    ) {
+        return await this.projectsService.fetchOne({
+            id: projectId,
+            owner: { id: userId },
+        });
     }
 
     @Post()
@@ -60,9 +66,9 @@ export class ProjectsController {
     @UsePipes(new ValidationPipe({ transform: true }))
     async create(
         @JwtUser('userId', ParseIntPipe) userId: number,
-        @Body() projectDto: CreateProjectDto,
+        @Body() dto: CreateProjectDto,
     ) {
-        return await this.projectsService.create(userId, projectDto);
+        return await this.projectsService.create({ ownerId: userId, dto });
     }
 
     @Patch(':id')
@@ -71,8 +77,23 @@ export class ProjectsController {
     async update(
         @JwtUser('userId', ParseIntPipe) userId: number,
         @Param('id', ParseIntPipe) projectId: number,
-        @Body() projectDto: UpdateProjectDto,
+        @Body() dto: UpdateProjectDto,
     ) {
-        return await this.projectsService.update(userId, projectId, projectDto);
+        return await this.projectsService.update({
+            ownerId: userId,
+            projectId,
+            dto,
+        });
+    }
+
+    @Delete(':id')
+    async delete(
+        @JwtUser('userId', ParseIntPipe) userId: number,
+        @Param('id', ParseIntPipe) projectId: number,
+    ) {
+        await this.projectsService.delete({
+            id: projectId,
+            owner: { id: userId },
+        });
     }
 }

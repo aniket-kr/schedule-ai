@@ -1,5 +1,6 @@
 import User from '../../users/entities/user.entity';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity('user_profiles')
 export default class UserProfile {
@@ -19,5 +20,6 @@ export default class UserProfile {
     picPath: string;
 
     @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
+    @Exclude()
     user: User;
 }

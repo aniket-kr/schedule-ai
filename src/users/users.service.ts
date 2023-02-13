@@ -1,64 +1,55 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+    ConflictException,
+    forwardRef,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
+import { BaseService } from '../common/services/base.service';
 import CreateUserDto from './dto/create-user.dto';
 import UpdateUserDto from './dto/update-user.dto';
 import User from './entities/user.entity';
-import { UserExistsException, UserNotFoundException } from './users.exception';
+
+export type UserCreateOptions = { dto: CreateUserDto };
+export type UserUpdateOptions = { id: User['id']; dto: UpdateUserDto };
 
 @Injectable()
-export class UsersService {
+export class UsersService extends BaseService<User> {
     constructor(
         @InjectRepository(User)
-        private readonly usersRepo: Repository<User>,
+        protected readonly repo: Repository<User>,
         @Inject(forwardRef(() => AuthService))
         private readonly authService: AuthService,
-    ) {}
-
-    fetchPaginated(page: number, limit: number) {
-        return this.usersRepo.findAndCount({ skip: page * limit, take: limit });
-    }
-
-    async fetchOne(id: number) {
-        const user = await this.usersRepo.findOneBy({ id });
-        if (!user) {
-            throw new UserNotFoundException(id);
-        }
-        return user;
-    }
-
-    async fetchOneByEmail(email: string) {
-        const user = await this.usersRepo.findOneBy({ email });
-        if (!user) {
-            throw new UserNotFoundException(email);
-        }
-        return user;
-    }
-
-    async create(userDto: CreateUserDto) {
-        const existingUser = await this.usersRepo.findOneBy({
-            email: userDto.email,
+    ) {
+        super({
+            notFound({ id }) {
+                const err = `user id ${id} does not exist`;
+                return new NotFoundException(err, {
+                    description: 'UserNotFoundException',
+                });
+            },
+            exists({ email }) {
+                const err = `user with email '${email}' already exists`;
+                return new ConflictException(err, {
+                    description: 'UserExistsException',
+                });
+            },
         });
-        if (existingUser) {
-            throw new UserExistsException(existingUser);
-        }
-
-        const user = this.usersRepo.create(userDto);
-        user.passwordHash = await this.authService.generateHash(
-            userDto.password,
-        );
-        return this.usersRepo.save(user);
     }
 
-    async update(id: number, { password }: UpdateUserDto) {
-        const user = await this.fetchOne(id);
+    async create({ dto }: UserCreateOptions) {
+        await this.ensureNotExists({ email: dto.email });
+        const user = this.repo.create(dto);
+        user.passwordHash = await this.authService.generateHash(dto.password);
+        return this.repo.save(user);
+    }
+
+    async update({ id, dto: { password } }: UserUpdateOptions) {
+        const user = await this.fetchOne({ id });
         user.passwordHash = await this.authService.generateHash(password);
-        return this.usersRepo.save(user);
-    }
-
-    async delete(id: number) {
-        const user = await this.fetchOne(id);
-        this.usersRepo.delete({ id: user.id });
+        return this.repo.save(user);
     }
 }

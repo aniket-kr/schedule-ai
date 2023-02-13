@@ -26,7 +26,7 @@ export class AuthService {
     }
 
     async validateUser(email: string, password: string) {
-        const user = await this.usersService.fetchOneByEmail(email);
+        const user = await this.usersService.fetchOne({ email });
         return (await this.isValidPassword(password, user.passwordHash))
             ? user
             : null;
@@ -38,18 +38,18 @@ export class AuthService {
     }
 
     getUser(userId: number) {
-        return this.usersService.fetchOne(userId);
+        return this.usersService.fetchOne({ id: userId });
     }
 
     createUser(userDto: CreateUserDto) {
-        return this.usersService.create(userDto);
+        return this.usersService.create({ dto: userDto });
     }
 
     updateUser(userId: number, @Body() userDto: UpdateUserDto) {
-        return this.usersService.update(userId, userDto);
+        return this.usersService.update({ id: userId, dto: userDto });
     }
 
     deleteUser(userId: number) {
-        return this.usersService.delete(userId);
+        return this.usersService.delete({ id: userId });
     }
 }

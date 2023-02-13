@@ -1,60 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import User from '../users/entities/user.entity';
-import { UserNotFoundException } from '../users/users.exception';
 import { Repository } from 'typeorm';
+import { BaseService } from '../common/services/base.service';
+import User from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import CreateUserProfileDto from './dto/create-user-profile.dto';
 import UpdateUserProfileDto from './dto/update-user-profile.dto';
 import UserProfile from './entities/user-profile.entity';
-import {
-    UserProfileExistsException,
-    UserProfileNotFoundException,
-} from './user-profiles.exception';
+
+export type UserProfileCreateOptions = {
+    userId: User['id'];
+    dto: CreateUserProfileDto;
+};
+
+export type UserProfileUpdateOptions = {
+    userId: User['id'];
+    dto: UpdateUserProfileDto;
+};
 
 @Injectable()
-export class UserProfilesService {
+export class UserProfilesService extends BaseService<UserProfile> {
     constructor(
         @InjectRepository(UserProfile)
-        private readonly profilesRepo: Repository<UserProfile>,
-        @InjectRepository(User)
-        private readonly usersRepo: Repository<User>,
-    ) {}
-
-    async fetchForUser(userId: number) {
-        const user = await this.usersRepo.findOneBy({ id: userId });
-        if (!user) {
-            throw new UserNotFoundException(userId);
-        } else if (!(await user.profile)) {
-            throw new UserProfileNotFoundException({ userId });
-        }
-        return user.profile;
-    }
-
-    async create(userId: number, profileDto: CreateUserProfileDto) {
-        const user = await this.usersRepo.findOneBy({ id: userId });
-        if (!user) {
-            throw new UserNotFoundException(userId);
-        } else if (await user.profile) {
-            throw new UserProfileExistsException(user.profile);
-        }
-        let profile = this.profilesRepo.create(profileDto);
-        user.profile = profile;
-        profile = await this.profilesRepo.save(profile);
-        this.usersRepo.save(user);
-        return profile;
-    }
-
-    async update(userId: number, profileDto: UpdateUserProfileDto) {
-        const profile = await this.profilesRepo.findOneBy({
-            user: { id: userId },
+        protected readonly repo: Repository<UserProfile>,
+        private readonly usersService: UsersService,
+    ) {
+        super({
+            notFound() {
+                const err = `user does not have a profile`;
+                return new NotFoundException(err, {
+                    description: 'UserProfileNotFoundException',
+                });
+            },
+            exists() {
+                const err = `user already has a user profile`;
+                return new ConflictException(err, {
+                    description: 'UserProfileExistsException',
+                });
+            },
         });
-        if (!profile) {
-            throw new UserProfileNotFoundException({ userId });
-        }
+    }
 
-        return this.profilesRepo.update(
-            { user: { id: userId } },
-            { ...profileDto },
-        );
+    async create({ userId, dto }: UserProfileCreateOptions) {
+        const user = await this.usersService.fetchOne({ id: userId });
+        await this.ensureNotExists({ user: { id: userId } });
+
+        const profile = this.repo.create(dto);
+        await profile.user;
+        profile.user = user;
+        return this.repo.save(profile);
+    }
+
+    async update({ userId, dto }: UserProfileUpdateOptions) {
+        const criteria = { user: { id: userId } };
+        await this.ensureExists(criteria);
+        await this.repo.update(criteria, dto);
+        return this.fetchOne(criteria);
     }
 }
