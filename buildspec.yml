@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 16
+    commands:
+      - echo "Install yarn"
+      - npm install -g yarn
+      - echo "Install all yarn.lock dependencies"
+      - yarn install --frozen-lockfile
+      
+  build:
+    commands:
+      - echo "Build started on `date`"
+      - yarn run build
+  
+  post_build:
+    commands:
+      - echo "Build completed on `date`"
