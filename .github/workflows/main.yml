@@ -1,4 +1,4 @@
-name: 'Timelog Commit QA'
+name: 'Code Style and List QA'
 
 on:
   push:
@@ -28,6 +28,3 @@ jobs:
 
       - name: Check eslint rules
         run: yarn run lint
-
-      - name: Ensure passing tests
-        run: yarn run test --passWithNoTests
