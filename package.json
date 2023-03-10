@@ -15,8 +15,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
-    "reinstall": "rimraf node_modules dist && yarn install --frozen-lockfile",
-    "deploy": "yarn run reinstall && yarn run build && yarn run start:prod"
+    "deploy": "npm ci --omit=dev && npm run start:prod"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",

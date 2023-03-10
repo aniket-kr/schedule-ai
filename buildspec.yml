@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 16
+
+    commands:
+      - npm ci
+
+  pre_build:
+    commands:
+      - echo "Build started `date`"
+
+  build:
+    commands:
+      - npm run build
+
+  post_build:
+    commands:
+      - echo "Build finished `date`"
+
+artifacts:
+  files:
+    - dist/**/*
+    - Procfile
+    - package.json
+    - package-lock.json
