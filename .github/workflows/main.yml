@@ -17,14 +17,14 @@ jobs:
       - name: Setup node v18
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-          cache: 'yarn'
+          node-version: 16
+          cache: 'npm'
 
-      - name: Install deps from yarn.lock
-        run: yarn install --frozen-lockfile
+      - name: Install deps from package-lock.json
+        run: npm ci
 
       - name: Check prettier formatting
-        run: "yarn run format:check"
+        run: "npm run format:check"
 
       - name: Check eslint rules
-        run: yarn run lint
+        run: npm run lint
