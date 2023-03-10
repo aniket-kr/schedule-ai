@@ -9,9 +9,6 @@
         // ESLint to allow for automatical and intelligent linting
         "dbaeumer.vscode-eslint",
 
-        // Jest testing support
-        "Orta.vscode-jest",
-
         // Basic intellisense engine
         "VisualStudioExptTeam.vscodeintellicode",
 
