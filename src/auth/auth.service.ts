@@ -1,7 +1,7 @@
-import { forwardRef, Injectable, Inject, Body } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Body, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '../config/config.service';
 import CreateUserDto from '../users/dto/create-user.dto';
 import UpdateUserDto from '../users/dto/update-user.dto';
 import User from '../users/entities/user.entity';
@@ -12,13 +12,12 @@ export class AuthService {
     constructor(
         @Inject(forwardRef(() => UsersService))
         private readonly usersService: UsersService,
-        private readonly configService: ConfigService,
+        private readonly config: ConfigService,
         private readonly jwtService: JwtService,
     ) {}
 
     async generateHash(password: string) {
-        const rounds = this.configService.getOrThrow<number>('auth.saltRounds');
-        return bcrypt.hash(password, rounds);
+        return bcrypt.hash(password, this.config.auth.saltRounds);
     }
 
     async isValidPassword(password: string, encrpyted: string) {

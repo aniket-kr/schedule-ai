@@ -1,14 +1,14 @@
-import { ConfigService } from '@nestjs/config';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ConfigService } from './config/config.service';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    const configService = app.get(ConfigService);
+    const config = app.get(ConfigService);
 
-    const host = configService.getOrThrow<string>('app.host');
-    const port = configService.getOrThrow<number>('app.port');
+    const { host, port } = config.app;
     await app.listen(port, host);
-    console.log(`Listening on http://${host}:${port}`);
+    Logger.log(`Server listening on http://${host}:${port}`, 'AppBootstrap');
 }
 bootstrap();
