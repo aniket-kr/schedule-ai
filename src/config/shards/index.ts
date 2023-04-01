@@ -16,3 +16,4 @@ export function invalid(label: string): never {
 export * from './app.shard';
 export * from './auth.shard';
 export * from './db.shard';
+export * from './s3.shard';

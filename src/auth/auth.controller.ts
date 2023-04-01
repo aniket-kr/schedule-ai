@@ -1,40 +1,47 @@
 import {
+    BadRequestException,
     Body,
-    ClassSerializerInterceptor,
     Controller,
+    DefaultValuePipe,
     Delete,
     Get,
+    ParseBoolPipe,
     ParseIntPipe,
     Patch,
     Post,
+    Query,
     UseGuards,
-    UseInterceptors,
-    UsePipes,
-    ValidationPipe,
 } from '@nestjs/common';
 import { AuthUser, JwtUser } from '../common/decorators/user.decorator';
-import CreateUserDto from '../users/dto/create-user.dto';
-import UpdateUserDto from '../users/dto/update-user.dto';
-import User from '../users/entities/user.entity';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UpdatePasswordDto } from '../users/dto/update-password.dto';
+import { User, UserId } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import { JwtAuthGuard, LocalAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+    constructor(
+        private readonly authService: AuthService,
+        private readonly usersService: UsersService,
+    ) {}
 
     @Get()
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(ClassSerializerInterceptor)
-    async fetchCurrentUser(@JwtUser('userId', ParseIntPipe) userId: number) {
-        return await this.authService.getUser(userId);
+    async fetchLoggedInUser(
+        @JwtUser('userId', ParseIntPipe) userId: UserId,
+        @Query('withProfile', new DefaultValuePipe('false'), ParseBoolPipe)
+        loadProfile: boolean,
+    ) {
+        const user = await this.usersService.findOne(userId, { loadProfile });
+        return user;
     }
 
     @Post('register')
-    @UsePipes(new ValidationPipe({ transform: true }))
-    @UseInterceptors(ClassSerializerInterceptor)
-    async register(@Body() userDto: CreateUserDto) {
-        return await this.authService.createUser(userDto);
+    async register(@Body() dto: CreateUserDto) {
+        dto.password = await this.authService.generateHash(dto.password);
+        return await this.usersService.create(dto);
     }
 
     @Post('login')
@@ -43,20 +50,23 @@ export class AuthController {
         return { accessToken: this.authService.getSignedJwt(user) };
     }
 
-    @Patch('change-password')
+    @Patch('password')
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(ClassSerializerInterceptor)
-    @UsePipes(new ValidationPipe({ transform: true }))
-    async changePassword(
-        @JwtUser('userId', ParseIntPipe) userId: number,
-        @Body() userDto: UpdateUserDto,
+    async updatePassword(
+        @JwtUser('userId', ParseIntPipe) userId: UserId,
+        @Body() dto: UpdatePasswordDto,
     ) {
-        return this.authService.updateUser(userId, userDto);
+        const user = await this.usersService.ensureExists(userId);
+        const { oldPassword: oldPass, newPassword: newPass } = dto;
+        if (!(await this.authService.isValidPassword(oldPass, user.password))) {
+            throw new BadRequestException('Incorrect original password');
+        }
+        return await this.usersService.updatePassword(userId, newPass);
     }
 
-    @Delete('delete-account')
+    @Delete()
     @UseGuards(JwtAuthGuard)
-    async deleteAccount(@JwtUser('userId', ParseIntPipe) userId: number) {
-        await this.authService.deleteUser(userId);
+    async deleteAccount(@JwtUser('userId', ParseIntPipe) userId: UserId) {
+        await this.usersService.delete(userId);
     }
 }

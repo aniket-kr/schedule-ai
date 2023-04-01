@@ -1,55 +1,82 @@
 import {
     ConflictException,
-    forwardRef,
-    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AuthService } from '../auth/auth.service';
-import { BaseService } from '../common/services/base.service';
-import CreateUserDto from './dto/create-user.dto';
-import UpdateUserDto from './dto/update-user.dto';
-import User from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User, UserId } from './entities/user.entity';
 
-export type UserCreateOptions = { dto: CreateUserDto };
-export type UserUpdateOptions = { id: User['id']; dto: UpdateUserDto };
-
+export type UserFindOptions = { loadProfile: boolean };
+const defaultUserFindOptions: UserFindOptions = { loadProfile: false };
 @Injectable()
-export class UsersService extends BaseService<User> {
+export class UsersService {
     constructor(
-        @InjectRepository(User)
-        protected readonly repo: Repository<User>,
-        @Inject(forwardRef(() => AuthService))
-        private readonly authService: AuthService,
-    ) {
-        super({
-            notFound({ id }) {
-                const err = `user id ${id} does not exist`;
-                return new NotFoundException(err, {
-                    description: 'UserNotFoundException',
-                });
-            },
-            exists({ email }) {
-                const err = `user with email '${email}' already exists`;
-                return new ConflictException(err, {
-                    description: 'UserExistsException',
-                });
-            },
+        @InjectRepository(User) private readonly usersRepo: Repository<User>,
+    ) {}
+
+    async findOne(userId: UserId, opts?: Partial<UserFindOptions>) {
+        opts = { ...defaultUserFindOptions, ...opts };
+        return this.usersRepo.findOne({
+            where: { userId },
+            relations: opts.loadProfile ? ['profile'] : [],
         });
     }
 
-    async create({ dto }: UserCreateOptions) {
-        await this.ensureNotExists({ email: dto.email });
-        const user = this.repo.create(dto);
-        user.passwordHash = await this.authService.generateHash(dto.password);
-        return this.repo.save(user);
+    async findOneByEmail(email: string, opts?: Partial<UserFindOptions>) {
+        opts = { ...defaultUserFindOptions, ...opts };
+        return this.usersRepo.findOne({
+            where: { email },
+            relations: opts.loadProfile ? ['profile'] : [],
+        });
     }
 
-    async update({ id, dto: { password } }: UserUpdateOptions) {
-        const user = await this.fetchOne({ id });
-        user.passwordHash = await this.authService.generateHash(password);
-        return this.repo.save(user);
+    async ensureNotExists(userId: UserId): Promise<void>;
+    async ensureNotExists(email: string): Promise<void>;
+    async ensureNotExists(idOrEmail: UserId | string): Promise<void>;
+    async ensureNotExists(idOrEmail: UserId | string) {
+        const key = typeof idOrEmail === 'string' ? 'email' : 'userId';
+        const exists = await this.usersRepo.exist({
+            where: { [key]: idOrEmail },
+        });
+        if (exists) {
+            throw new ConflictException(`user ${idOrEmail} already exists`);
+        }
+    }
+
+    async ensureExists(userId: UserId): Promise<User>;
+    async ensureExists(email: string): Promise<User>;
+    async ensureExists(idOrEmail: UserId | string): Promise<User>;
+    async ensureExists(idOrEmail: UserId | string) {
+        const key = typeof idOrEmail === 'string' ? 'email' : 'userId';
+        const user = await this.usersRepo.findOneBy({ [key]: idOrEmail });
+
+        if (!user) {
+            throw new NotFoundException(`user ${idOrEmail} does not exist`);
+        }
+        return user;
+    }
+
+    /** DTO passed to create must have HASHED PASSWORD */
+    async create(dto: CreateUserDto) {
+        await this.ensureNotExists(dto.email);
+        const user = this.usersRepo.create(dto);
+        return this.usersRepo.save(user);
+    }
+
+    /** `newHashedPassword` must be HASHED PASSWORD */
+    async updatePassword(userId: UserId, newHashedPassword: string) {
+        const user = await this.ensureExists(userId);
+        user.password = newHashedPassword;
+        return this.usersRepo.save(user);
+    }
+
+    async delete(userId: UserId): Promise<void>;
+    async delete(email: string): Promise<void>;
+    async delete(idOrEmail: UserId | string): Promise<void>;
+    async delete(idOrEmail: UserId | string) {
+        const key = typeof idOrEmail === 'string' ? 'email' : 'userId';
+        this.usersRepo.delete({ [key]: idOrEmail });
     }
 }

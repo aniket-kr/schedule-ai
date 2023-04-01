@@ -1,4 +1,6 @@
+import { UserId } from '../../users/entities/user.entity';
+
 export type UserToken = {
-    userId: number;
+    userId: UserId;
     email: string;
 };

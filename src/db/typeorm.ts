@@ -1,5 +1,6 @@
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import { ConfigService } from '../config/config.service';
+import { entities } from './entities';
 
 const config = new ConfigService();
 export const dataSourceOptions: DataSourceOptions = {
@@ -12,7 +13,7 @@ export const dataSourceOptions: DataSourceOptions = {
     synchronize: true,
     connectTimeout: config.db.timeoutMs,
     migrations: ['dist/db/migrations/*.js'],
-    entities: ['dist/**/entities/*.entity.js'],
+    entities,
 };
 
 const dataSource = new DataSource(dataSourceOptions);

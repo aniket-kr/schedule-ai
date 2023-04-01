@@ -1,35 +1,30 @@
-import { Exclude } from 'class-transformer';
-import Faculty from '../../faculties/entities/faculty.entity';
-import Project from '../../projects/entities/project.entity';
-import UserProfile from '../../user-profiles/entities/user-profile.entity';
+import { Exclude, Type } from 'class-transformer';
 import {
     Column,
     Entity,
     JoinColumn,
-    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+import type { Nominal } from '../../common/utils';
+import { Profile } from './profile.entity';
+
+export type UserId = Nominal<number, 'UserId'>;
 
 @Entity('users')
-export default class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class User {
+    @PrimaryGeneratedColumn('increment')
+    userId!: UserId;
 
     @Column({ length: 254, unique: true })
-    email: string;
+    email!: string;
 
     @Column({ length: 60 })
     @Exclude()
-    passwordHash: string;
+    password!: string;
 
-    @OneToOne(() => UserProfile, (profile) => profile.user)
+    @OneToOne(() => Profile, (profile) => profile.user)
+    @Type(() => Profile)
     @JoinColumn()
-    profile: UserProfile;
-
-    @OneToMany(() => Project, (project) => project.owner)
-    projects: Project[];
-
-    @OneToMany(() => Faculty, (faculty) => faculty.user)
-    faculties: Faculty[];
+    profile?: Profile;
 }
