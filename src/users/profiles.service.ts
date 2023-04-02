@@ -7,13 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { S3Service } from '../aws/s3.service';
 import { ImagesService } from '../images/images.service';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
-import { Profile, ProfileId } from './entities/profile.entity';
+import { CreateProfileDto, UpdateProfileDto } from './dto';
+import { Profile, ProfileId } from './entities';
 import { UsersService } from './users.service';
 
 @Injectable()
-export class ProfileService {
+export class ProfilesService {
     constructor(
         @InjectRepository(Profile)
         private readonly profilesRepo: Repository<Profile>,

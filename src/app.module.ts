@@ -5,6 +5,7 @@ import { AwsModule } from './aws/aws.module';
 import { ConfigModule } from './config/config.module';
 import { dataSourceOptions } from './db/typeorm';
 import { ImagesModule } from './images/images.module';
+import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { UsersModule } from './users/users.module';
         AwsModule,
         AuthModule,
         UsersModule,
+        ProjectsModule,
     ],
 })
 export class AppModule {}

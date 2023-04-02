@@ -15,22 +15,21 @@ import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { JwtUser } from '../common/decorators/user.decorator';
 import { ensureMimetype } from '../common/file-filters';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
-import { ProfileService } from './profile.service';
+import { CreateProfileDto, UpdateProfileDto } from './dto';
+import { ProfilesService } from './profiles.service';
 
 const AVATAR_FILE_SIZE_MAX_BYTES = 1e7; // 10MB
 
 @Controller('profile')
-export class ProfileController {
-    constructor(private readonly profileService: ProfileService) {}
+export class ProfilesController {
+    constructor(private readonly profilesService: ProfilesService) {}
 
     @Get()
     async get(@Query('email') email?: string) {
         if (!email) {
             throw new BadRequestException('email query param is required');
         }
-        return await this.profileService.findOneByEmail(email);
+        return await this.profilesService.findOneByEmail(email);
     }
 
     @Post()
@@ -52,7 +51,7 @@ export class ProfileController {
         @UploadedFile() avatar?: Express.Multer.File,
     ) {
         dto.avatar = avatar;
-        return await this.profileService.create(userEmail, dto);
+        return await this.profilesService.create(userEmail, dto);
     }
 
     @Patch()
@@ -72,6 +71,6 @@ export class ProfileController {
         @JwtUser('email') userEmail: string,
         @Body() dto: UpdateProfileDto,
     ) {
-        return await this.profileService.update(userEmail, dto);
+        return await this.profilesService.update(userEmail, dto);
     }
 }
