@@ -5,6 +5,7 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    Unique,
 } from 'typeorm';
 import { Nominal } from '../../common/utils';
 import { Project } from './project.entity';
@@ -13,6 +14,7 @@ import { Room } from './room.entity';
 export type DepartmentId = Nominal<number, 'DepartmentId'>;
 
 @Entity('departments')
+@Unique(['project', 'name'])
 export class Department {
     @PrimaryGeneratedColumn('increment')
     departmentId!: DepartmentId;

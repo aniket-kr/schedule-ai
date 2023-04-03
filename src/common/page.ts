@@ -1,5 +1,5 @@
 export class Page<T> {
-    static nextFromCurrent<U>(
+    static build<U>(
         items: U[],
         total: number,
         urlPath: string,

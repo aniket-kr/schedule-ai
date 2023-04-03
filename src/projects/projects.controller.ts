@@ -37,7 +37,7 @@ export class ProjectsController {
             limit,
         );
         const params = { page: page + 1, limit };
-        return Page.nextFromCurrent(projects, total, urlPath, params);
+        return Page.build(projects, total, urlPath, params);
     }
 
     @Get(':projectId')
