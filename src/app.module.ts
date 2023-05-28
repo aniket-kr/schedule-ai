@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { AwsModule } from './aws/aws.module';
 import { ConfigModule } from './config/config.module';
 import { dataSourceOptions } from './db/typeorm';
+import { FacultiesModule } from './faculties/faculties.module';
 import { ImagesModule } from './images/images.module';
 import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
@@ -17,6 +18,7 @@ import { UsersModule } from './users/users.module';
         AuthModule,
         UsersModule,
         ProjectsModule,
+        FacultiesModule,
     ],
 })
 export class AppModule {}

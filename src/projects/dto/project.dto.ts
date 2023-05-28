@@ -1,14 +1,19 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class UpdateProjectDto {
-    @IsOptional()
+export class CreateProjectDto {
     @IsString()
     @IsNotEmpty()
+    name!: string;
+}
+
+export class UpdateProjectDto {
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
     name?: string;
 
-    @IsOptional()
-    @IsString()
-    @IsNotEmpty()
     @IsEmail()
+    @IsNotEmpty()
+    @IsOptional()
     owner?: string;
 }

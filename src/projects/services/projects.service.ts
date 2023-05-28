@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserId } from '../users/entities';
-import { UsersService } from '../users/users.service';
-import { CreateProjectDto, UpdateProjectDto } from './dto';
-import { Project, ProjectId } from './entities';
+import { UserId } from '../../users/entities';
+import { UsersService } from '../../users/users.service';
+import { CreateProjectDto, UpdateProjectDto } from '../dto';
+import { Project, ProjectId } from '../entities';
 
 @Injectable()
 export class ProjectsService {
@@ -48,6 +48,8 @@ export class ProjectsService {
     async findWithCount(userId: UserId, page: number, limit: number) {
         return this.projectsRepo.findAndCount({
             where: { owner: { userId } },
+            loadRelationIds: true,
+            relations: ['owner'],
             skip: (page - 1) * limit,
             take: limit,
         });
@@ -80,6 +82,6 @@ export class ProjectsService {
     }
 
     async delete(userId: UserId, projectId: ProjectId) {
-        this.projectsRepo.delete({ projectId, owner: { userId } });
+        await this.projectsRepo.delete({ projectId, owner: { userId } });
     }
 }

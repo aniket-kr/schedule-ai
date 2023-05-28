@@ -5,9 +5,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserId } from '../users/entities';
-import { CreateDepartmentDto, UpdateDepartmentDto } from './dto';
-import { Department, DepartmentId, ProjectId } from './entities';
+import { UserId } from '../../users/entities';
+import { CreateDepartmentDto, UpdateDepartmentDto } from '../dto';
+import { Department, DepartmentId, ProjectId } from '../entities';
 
 @Injectable()
 export class DepartmentsService {
@@ -82,6 +82,10 @@ export class DepartmentsService {
         dto: UpdateDepartmentDto,
     ) {
         const dept = await this.ensureExists(userId, projectId, departmentId);
+
+        // check for name change, and ensure new name doesn't exist
+        dto.name && (await this.ensureNotExists(userId, projectId, dto.name));
+
         this.deptsRepo.merge(dept, dto);
         return this.deptsRepo.save(dept);
     }

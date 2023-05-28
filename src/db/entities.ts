@@ -1,3 +1,4 @@
+import { Faculty } from '../faculties/entities';
 import {
     Department,
     Division,
@@ -19,4 +20,5 @@ export const entities = [
     RoomType,
     Subject,
     TimeSlot,
+    Faculty,
 ];

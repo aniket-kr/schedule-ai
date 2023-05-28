@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
     Column,
     Entity,
@@ -8,7 +9,8 @@ import {
     Unique,
 } from 'typeorm';
 import { Nominal } from '../../common/utils';
-import { User } from '../../users/entities/user.entity';
+import { Faculty } from '../../faculties/entities';
+import { User } from '../../users/entities';
 import { Department } from './department.entity';
 import { Division } from './division.entity';
 import { RoomType } from './room-type.entity';
@@ -27,6 +29,7 @@ export class Project {
     @Column({ length: 100 })
     name!: string;
 
+    @Transform(({ value }) => value?.userId, { groups: ['basic'] })
     @JoinColumn()
     @ManyToOne(() => User, (user) => user.projects, { onDelete: 'CASCADE' })
     owner!: User;
@@ -48,4 +51,7 @@ export class Project {
 
     @OneToMany(() => TimeSlot, (timeSlot) => timeSlot.project)
     timeSlots!: TimeSlot[];
+
+    @OneToMany(() => Faculty, (faculty) => faculty.project)
+    faculties!: Faculty[];
 }

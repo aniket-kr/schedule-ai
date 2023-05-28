@@ -10,8 +10,11 @@ import { ConfigService } from './config/config.service';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
-    const interceptor = new ClassSerializerInterceptor(app.get(Reflector));
-    app.useGlobalInterceptors(interceptor);
+    const serializerInterceptor = new ClassSerializerInterceptor(
+        app.get(Reflector),
+        { strategy: 'excludeAll' },
+    );
+    app.useGlobalInterceptors(serializerInterceptor);
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
     const config = app.get(ConfigService);

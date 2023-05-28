@@ -1,5 +1,6 @@
 import {
     Body,
+    ClassSerializerInterceptor,
     Controller,
     Delete,
     Get,
@@ -8,16 +9,17 @@ import {
     Post,
     Query,
     UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/auth.guard';
-import { UrlPath } from '../common/decorators/path.decorator';
-import { JwtUser } from '../common/decorators/user.decorator';
-import { PaginationParamsDto } from '../common/dto/pagination.dto';
-import { Page } from '../common/page';
-import { UserId } from '../users/entities';
-import { CreateProjectDto, UpdateProjectDto } from './dto';
-import { ProjectId } from './entities';
-import { ProjectsService } from './projects.service';
+import { JwtAuthGuard } from '../../auth/auth.guard';
+import { UrlPath } from '../../common/decorators/path.decorator';
+import { JwtUser } from '../../common/decorators/user.decorator';
+import { PaginationParamsDto } from '../../common/dto/pagination.dto';
+import { Page } from '../../common/page';
+import { UserId } from '../../users/entities';
+import { CreateProjectDto, UpdateProjectDto } from '../dto';
+import { ProjectId } from '../entities';
+import { ProjectsService } from '../services/projects.service';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
@@ -49,6 +51,7 @@ export class ProjectsController {
     }
 
     @Post()
+    @UseInterceptors(new ClassSerializerInterceptor({ groups: ['basic'] }))
     async create(
         @JwtUser('userId') userId: UserId,
         @Body() dto: CreateProjectDto,

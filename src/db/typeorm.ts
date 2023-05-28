@@ -14,6 +14,7 @@ export const dataSourceOptions: DataSourceOptions = {
     connectTimeout: config.db.timeoutMs,
     migrations: ['dist/db/migrations/*.js'],
     entities,
+    logging: true,
 };
 
 const dataSource = new DataSource(dataSourceOptions);
