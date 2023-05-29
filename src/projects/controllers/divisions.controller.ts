@@ -11,7 +11,7 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/auth.guard';
-import { type DivisionsService } from '../services';
+import { DivisionsService } from '../services';
 import { UserId } from '../../users/entities';
 import { DivisionId, ProjectId } from '../entities';
 import { UrlPath } from '../../common/decorators/path.decorator';

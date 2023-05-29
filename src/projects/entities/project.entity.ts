@@ -15,7 +15,7 @@ import { Department } from './department.entity';
 import { Division } from './division.entity';
 import { RoomType } from './room-type.entity';
 import { Room } from './room.entity';
-import { Subject } from './subject.entity';
+import { Subject } from '../../subjects/entities/subject.entity';
 import { TimeSlot } from './time-slot.entity';
 
 export type ProjectId = Nominal<number, 'ProjectId'>;

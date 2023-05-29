@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsPositive, IsString, MaxLength } from 'class-validator';
-import { RoomTypeId } from '../entities';
+import { RoomTypeId } from '../../projects/entities';
 
 export class CreateSubjectDto {
     @IsString()
@@ -15,8 +15,9 @@ export class CreateSubjectDto {
 
     @IsNotEmpty()
     @IsPositive()
-    roomType!: RoomTypeId;
+    roomTypeId!: RoomTypeId;
 }
 
 const PartialDto = PartialType(CreateSubjectDto);
+
 export class UpdateSubjectDto extends PartialDto {}

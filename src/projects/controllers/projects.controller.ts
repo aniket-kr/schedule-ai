@@ -19,7 +19,7 @@ import { Page } from '../../common/page';
 import { UserId } from '../../users/entities';
 import { CreateProjectDto, UpdateProjectDto } from '../dto';
 import { ProjectId } from '../entities';
-import { ProjectsService } from '../services/projects.service';
+import { ProjectsService } from '../services';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)

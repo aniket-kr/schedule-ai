@@ -16,7 +16,7 @@ import { JwtUser } from '../../common/decorators/user.decorator';
 import { PaginationParamsDto } from '../../common/dto/pagination.dto';
 import { Page } from '../../common/page';
 import { UserId } from '../../users/entities';
-import { DepartmentsService } from '../services/departments.service';
+import { DepartmentsService } from '../services';
 import { CreateDepartmentDto } from '../dto';
 import { DepartmentId, ProjectId } from '../entities';
 

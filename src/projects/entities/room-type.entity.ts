@@ -9,7 +9,7 @@ import {
 import { Nominal } from '../../common/utils';
 import { Project } from './project.entity';
 import { Room } from './room.entity';
-import { Subject } from './subject.entity';
+import { Subject } from '../../subjects/entities/subject.entity';
 
 export type RoomTypeId = Nominal<number, 'RoomTypeId'>;
 

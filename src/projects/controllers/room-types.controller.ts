@@ -11,7 +11,7 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/auth.guard';
-import { type RoomTypesService } from '../services';
+import { RoomTypesService } from '../services';
 import { Page } from '../../common/page';
 import { JwtUser } from '../../common/decorators/user.decorator';
 import { UserId } from '../../users/entities';

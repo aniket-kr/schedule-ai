@@ -7,13 +7,13 @@ import {
     Unique,
 } from 'typeorm';
 import { Nominal } from '../../common/utils';
-import { Project } from './project.entity';
-import { RoomType } from './room-type.entity';
+import { Project, RoomType } from '../../projects/entities';
 
 export type SubjectId = Nominal<number, 'SubjectId'>;
 
 @Entity('subjects')
 @Unique(['project', 'code'])
+@Unique(['project', 'name'])
 export class Subject {
     @PrimaryGeneratedColumn('increment')
     subjectId!: SubjectId;

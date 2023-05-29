@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProjectId, RoomType, RoomTypeId } from '../entities';
-import { type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserId } from '../../users/entities';
 import { CreateRoomTypeDto, UpdateRoomTypeDto } from '../dto';
 
