@@ -85,6 +85,15 @@ export class SubjectsService {
         return this.ensureExists(userId, projectId, subjectId);
     }
 
+    async teachingFacultiesAll(
+        userId: UserId,
+        projectId: ProjectId,
+        subjectId: SubjectId,
+    ) {
+        const subject = await this.ensureExists(userId, projectId, subjectId);
+        return await subject.faculties;
+    }
+
     async create(userId: UserId, projectId: ProjectId, dto: CreateSubjectDto) {
         await this.ensureNotExistsWithName(userId, projectId, dto.name);
         await this.ensureNotExistsWithCode(userId, projectId, dto.code);

@@ -6,22 +6,25 @@ import {
     Param,
     ParseIntPipe,
     Patch,
-    Put,
+    Post,
     Query,
+    UseGuards,
 } from '@nestjs/common';
-import { SubjectsService } from './subjects.service';
+import { FacultiesService } from './faculties.service';
 import { PaginationParamsDto } from '../common/dto/pagination.dto';
 import { JwtUser } from '../common/decorators/user.decorator';
 import { UserId } from '../users/entities';
 import { ProjectId } from '../projects/entities';
 import { UrlPath } from '../common/decorators/path.decorator';
+import { JwtAuthGuard } from '../auth/auth.guard';
 import { Page } from '../common/page';
-import { SubjectId } from './entities/subject.entity';
-import { CreateSubjectDto, UpdateSubjectDto } from './dto';
+import { CreateFacultyDto, UpdateFacultyDto } from './dto';
+import { FacultyId } from './entities';
 
-@Controller('/projects/:projectId/subjects')
-export class SubjectsController {
-    constructor(private readonly subjectsService: SubjectsService) {}
+@Controller('/projects/:projectId/faculties')
+@UseGuards(JwtAuthGuard)
+export class FacultiesController {
+    constructor(private readonly facultiesService: FacultiesService) {}
 
     @Get()
     async getPaginated(
@@ -31,68 +34,72 @@ export class SubjectsController {
         @Query() queryParams: PaginationParamsDto,
     ) {
         const { page, limit } = { page: 1, limit: 20, ...queryParams };
-        const [subjects, total] = await this.subjectsService.findWithCount(
+        const [faculties, total] = await this.facultiesService.findWithCount(
             userId,
             projectId,
             page,
             limit,
         );
         const params = { page: page + 1, limit };
-        return Page.build(subjects, total, urlPath, params);
+        return Page.build(faculties, total, urlPath, params);
     }
 
-    @Get(':subjectId')
+    @Get(':facultyId')
     async getOne(
         @JwtUser('userId', ParseIntPipe) userId: UserId,
         @Param('projectId', ParseIntPipe) projectId: ProjectId,
-        @Param('subjectId', ParseIntPipe) subjectId: SubjectId,
+        @Param('facultyId', ParseIntPipe) facultyId: FacultyId,
     ) {
-        return await this.subjectsService.findOne(userId, projectId, subjectId);
-    }
-
-    @Get(':subjectId/faculties')
-    async getAllTeachingFaculties(
-        @JwtUser('userId', ParseIntPipe) userId: UserId,
-        @Param('projectId', ParseIntPipe) projectId: ProjectId,
-        @Param('subjectId', ParseIntPipe) subjectId: SubjectId,
-    ) {
-        return await this.subjectsService.teachingFacultiesAll(
+        return await this.facultiesService.findOne(
             userId,
             projectId,
-            subjectId,
+            facultyId,
         );
     }
 
-    @Put()
+    @Get(':facultyId/subjects')
+    async getAllSubjectsTaught(
+        @JwtUser('userId', ParseIntPipe) userId: UserId,
+        @Param('projectId', ParseIntPipe) projectId: ProjectId,
+        @Param('facultyId', ParseIntPipe) facultyId: FacultyId,
+    ) {
+        return await this.facultiesService.subjectsTaughtAll(
+            userId,
+            projectId,
+            facultyId,
+        );
+    }
+
+    @Post()
     async create(
         @JwtUser('userId', ParseIntPipe) userId: UserId,
         @Param('projectId', ParseIntPipe) projectId: ProjectId,
-        @Body() dto: CreateSubjectDto,
+        @Body() dto: CreateFacultyDto,
     ) {
-        return await this.subjectsService.create(userId, projectId, dto);
+        return await this.facultiesService.create(userId, projectId, dto);
     }
 
-    @Patch(':subjectId')
+    @Patch(':facultyId')
     async update(
         @JwtUser('userId', ParseIntPipe) userId: UserId,
         @Param('projectId', ParseIntPipe) projectId: ProjectId,
-        @Param('subjectId', ParseIntPipe) subjectId: SubjectId,
-        @Body() dto: UpdateSubjectDto,
+        @Param('facultyId', ParseIntPipe) facultyId: FacultyId,
+        @Body() dto: UpdateFacultyDto,
     ) {
-        return await this.subjectsService.update(
+        return await this.facultiesService.update(
             userId,
             projectId,
-            subjectId,
+            facultyId,
             dto,
         );
     }
 
-    @Delete(':subjectId')
+    @Delete(':facultyId')
     async delete(
         @JwtUser('userId', ParseIntPipe) userId: UserId,
         @Param('projectId', ParseIntPipe) projectId: ProjectId,
-        @Param('subjectId', ParseIntPipe) subjectId: SubjectId,
+        @Param('facultyId', ParseIntPipe) facultyId: FacultyId,
     ) {
-        await this.subjectsService.delete(userId, projectId, subjectId);
+        await this.facultiesService.delete(userId, projectId, facultyId);
     }
 }

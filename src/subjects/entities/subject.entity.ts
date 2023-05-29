@@ -2,12 +2,14 @@ import {
     Column,
     Entity,
     JoinColumn,
+    ManyToMany,
     ManyToOne,
     PrimaryGeneratedColumn,
     Unique,
 } from 'typeorm';
 import { Nominal } from '../../common/utils';
 import { Project, RoomType } from '../../projects/entities';
+import { Faculty } from '../../faculties/entities';
 
 export type SubjectId = Nominal<number, 'SubjectId'>;
 
@@ -29,6 +31,9 @@ export class Subject {
         onDelete: 'CASCADE',
     })
     roomType!: RoomType;
+
+    @ManyToMany(() => Faculty, (faculty) => faculty.subjects)
+    faculties!: Faculty[];
 
     @JoinColumn()
     @ManyToOne(() => Project, (project) => project.subjects, {
