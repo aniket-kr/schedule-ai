@@ -1,7 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module';
-import { Department, Division, Project, Room, RoomType } from './entities';
+import {
+    Department,
+    Division,
+    Project,
+    Room,
+    RoomType,
+    TimeSlot,
+} from './entities';
 import {
     DepartmentsController,
     DivisionsController,
@@ -15,7 +22,9 @@ import {
     ProjectsService,
     RoomsService,
     RoomTypesService,
+    TimeSlotsService,
 } from './services';
+import { TimeSlotsController } from './controllers/time-slots.controller';
 
 @Module({
     imports: [
@@ -25,6 +34,7 @@ import {
             Division,
             Room,
             RoomType,
+            TimeSlot,
         ]),
         UsersModule,
     ],
@@ -34,6 +44,7 @@ import {
         DivisionsService,
         RoomsService,
         RoomTypesService,
+        TimeSlotsService,
     ],
     controllers: [
         ProjectsController,
@@ -41,6 +52,7 @@ import {
         DivisionsController,
         RoomsController,
         RoomTypesController,
+        TimeSlotsController,
     ],
     exports: [RoomTypesService],
 })

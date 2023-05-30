@@ -9,13 +9,13 @@ import { Nominal } from '../../common/utils';
 import { Project } from './project.entity';
 
 export enum Day {
-    MONDAY = 0,
-    TUESDAY,
-    WEDNESDAY,
-    THURSDAY,
-    FRIDAY,
-    SATURDAY,
-    SUNDAY,
+    MONDAY = 'MON',
+    TUESDAY = 'TUE',
+    WEDNESDAY = 'WED',
+    THURSDAY = 'THU',
+    FRIDAY = 'FRI',
+    SATURDAY = 'SAT',
+    SUNDAY = 'SUN',
 }
 
 export type TimeSlotId = Nominal<number, 'TimeSlotId'>;
